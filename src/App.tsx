@@ -1,8 +1,78 @@
-import React from "react";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Box,
+  Grid,
+} from "@mui/material";
+import React, { useState } from "react";
 import "./App.css";
 
 function App() {
-  return <div className="App">LMAO</div>;
+  const [checkAttendance, setCheckAttendance] = useState(false);
+  const [value, setValue] = useState("");
+  return (
+    <div className="App">
+      {!checkAttendance ? (
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setCheckAttendance(true);
+          }}
+        >
+          Check Attendance
+        </Button>
+      ) : (
+        <div
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "40%",
+          }}
+        >
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Class</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={value}
+              label="Choose class"
+              //onChange={handleChange}
+            >
+              <MenuItem value={10}>Ten</MenuItem>
+              <MenuItem value={20}>Twenty</MenuItem>
+              <MenuItem value={30}>Thirty</MenuItem>
+            </Select>
+          </FormControl>
+
+          <div style={{ marginTop: "20px" }}>
+            <Button
+              style={{ marginRight: "10px" }}
+              variant="outlined"
+              onClick={() => {
+                console.log("cehcking");
+              }}
+            >
+              Check
+            </Button>
+
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setCheckAttendance(false);
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default App;
