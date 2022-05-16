@@ -9,10 +9,12 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import "./App.css";
+import { Attendance } from "./pages/Attendance";
 
 function App() {
   const [checkAttendance, setCheckAttendance] = useState(false);
   const [value, setValue] = useState("");
+  const [seeAttendance, setSeeAttendance] = useState(false);
   return (
     <div className="App">
       {!checkAttendance ? (
@@ -24,7 +26,7 @@ function App() {
         >
           Check Attendance
         </Button>
-      ) : (
+      ) : !seeAttendance ? (
         <div
           style={{
             position: "absolute",
@@ -54,7 +56,7 @@ function App() {
               style={{ marginRight: "10px" }}
               variant="outlined"
               onClick={() => {
-                console.log("cehcking");
+                setSeeAttendance(true);
               }}
             >
               Check
@@ -70,6 +72,8 @@ function App() {
             </Button>
           </div>
         </div>
+      ) : (
+        <Attendance />
       )}
     </div>
   );
