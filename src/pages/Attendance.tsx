@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Paper,
@@ -8,9 +8,15 @@ import {
   CardContent,
   CardActions,
   Button,
+  CircularProgress,
 } from "@mui/material";
+import { getDatabase, ref, onValue, set } from "firebase/database";
 import { styled } from "@mui/material/styles";
-interface AttendanceProps {}
+
+interface AttendanceProps {
+  names: string[];
+  ids: string[];
+}
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -53,7 +59,35 @@ const card = (
   </React.Fragment>
 );
 
-export const Attendance: React.FC<AttendanceProps> = ({}) => {
+export const Attendance: React.FC<AttendanceProps> = ({ names, ids }) => {
+  const [loading, setLoading] = useState(true);
+  const [stud, setStud] = useState<Array<string>>([]);
+  const [id, setIDS] = useState<Array<string>>([]);
+  useEffect(() => {
+    const db = getDatabase();
+    const attendance = ref(db, "/attendance");
+    let students: Array<string> = [];
+    onValue(attendance, (snapshot) => {
+      const data = snapshot.val();
+      // console.log(data);
+      setIDS([...data]);
+      for (var i = 0; i < data.length; i++) {
+        let val = data[i];
+        let str: string = val.toString();
+        //console.log(val.toUpperCase().toString());
+        //console.log(ids);
+        const index = ids.findIndex((item) => item === str);
+        //console.log(index);
+        students.push(names[index]);
+      }
+    });
+
+    setTimeout(() => {
+      setLoading(false);
+      setStud([...students]);
+    }, 4000);
+  }, []);
+
   return (
     <div
       style={{
@@ -65,29 +99,46 @@ export const Attendance: React.FC<AttendanceProps> = ({}) => {
         transform: "translate(-50%, -50%)",
       }}
     >
-      <Grid
-        container
-        rowSpacing={3}
-        margin={3}
-        display="flex"
-        justifyContent="space-evenly"
-        flexDirection="row"
-      >
-        {Array.from(Array(10)).map((_, index) => (
-          <Grid item xs={4} key={index}>
-            <Box
-              height="100%"
-              display="flex"
-              justifyContent="center"
-              flexDirection="column"
-            >
-              <Card sx={{ maxWidth: 300 }} variant="outlined">
-                {card}
-              </Card>
-            </Box>
-          </Grid>
-        ))}
-      </Grid>
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <Grid
+          container
+          rowSpacing={3}
+          margin={3}
+          display="flex"
+          justifyContent="space-evenly"
+          flexDirection="row"
+        >
+          {stud.map((item, idx) => (
+            <Grid item xs={3} key={idx}>
+              <Box
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                flexDirection="column"
+              >
+                <Card sx={{ maxWidth: 200, height: 100 }} variant="outlined">
+                  <React.Fragment>
+                    <CardContent>
+                      <Typography
+                        sx={{ fontSize: 10 }}
+                        color="text.secondary"
+                        gutterBottom
+                      >
+                        {item}
+                      </Typography>
+                      <Typography variant="h5" component="div">
+                        {id[idx]}
+                      </Typography>
+                    </CardContent>
+                  </React.Fragment>
+                </Card>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      )}
     </div>
   );
 };

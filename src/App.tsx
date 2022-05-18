@@ -1,79 +1,71 @@
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Box,
-  Grid,
-} from "@mui/material";
-import React, { useState } from "react";
+import { Button, CircularProgress } from "@mui/material";
+import React, { useState, useEffect } from "react";
 import "./App.css";
+import { getDatabase, ref, onValue, set } from "firebase/database";
 import { Attendance } from "./pages/Attendance";
 
 function App() {
   const [checkAttendance, setCheckAttendance] = useState(false);
-  const [value, setValue] = useState("");
-  const [seeAttendance, setSeeAttendance] = useState(false);
+
+  const [IDs, setids] = useState<string[]>([]);
+  const [names, setNames] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const db = getDatabase();
+    let ids: Array<string> = [];
+    let name: Array<string> = [];
+    const studentsName = ref(db, "/Name");
+    const studentsId = ref(db, "/Student ID");
+    // const attendance = ref(db, "/dates");
+    // console.log(starCountRef);
+    onValue(studentsId, (snapshot) => {
+      const data = snapshot.val();
+      // console.log(data);
+
+      ids.push(...data);
+    });
+
+    onValue(studentsName, (snapshot) => {
+      const data = snapshot.val();
+      name.push(...data);
+    });
+
+    setTimeout(() => {
+      // console.log(names);
+      // console.log(ids);
+      setids([...ids]);
+      setNames([...name]);
+      setLoading(false);
+    }, 2000);
+  }, []);
   return (
     <div className="App">
-      {!checkAttendance ? (
-        <Button
-          variant="outlined"
-          onClick={() => {
-            setCheckAttendance(true);
-          }}
-        >
-          Check Attendance
-        </Button>
-      ) : !seeAttendance ? (
+      {loading ? (
+        <CircularProgress />
+      ) : !checkAttendance ? (
         <div
           style={{
-            position: "absolute",
+            height: "100vh",
+            width: "100vh",
+            position: "fixed",
             left: "50%",
-            top: "50%",
+            top: "90%",
             transform: "translate(-50%, -50%)",
-            width: "40%",
           }}
         >
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Class</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={value}
-              label="Choose class"
-              //onChange={handleChange}
-            >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
-            </Select>
-          </FormControl>
-
-          <div style={{ marginTop: "20px" }}>
-            <Button
-              style={{ marginRight: "10px" }}
-              variant="outlined"
-              onClick={() => {
-                setSeeAttendance(true);
-              }}
-            >
-              Check
-            </Button>
-
-            <Button
-              variant="outlined"
-              onClick={() => {
-                setCheckAttendance(false);
-              }}
-            >
-              Cancel
-            </Button>
-          </div>
+          {" "}
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setCheckAttendance(true);
+            }}
+          >
+            Check Attendance
+          </Button>{" "}
         </div>
       ) : (
-        <Attendance />
+        <Attendance names={names} ids={IDs} />
       )}
     </div>
   );
