@@ -18,6 +18,11 @@ interface AttendanceProps {
   ids: string[];
 }
 
+interface ItemType {
+  tag: string;
+  id: string;
+}
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -67,23 +72,39 @@ export const Attendance: React.FC<AttendanceProps> = ({ names, ids }) => {
     const db = getDatabase();
     const attendance = ref(db, "/attendance");
     let students: Array<string> = [];
+    let idC: Array<string> = [];
     onValue(attendance, (snapshot) => {
       const data = snapshot.val();
-      // console.log(data);
-      setIDS([...data]);
-      for (var i = 0; i < data.length; i++) {
-        let val = data[i];
+      //console.log(data);
+      // setIDS([...data]);
+      //console.log(data);
+      Object.entries(data).forEach((item) => {
+        //console.log(item);
+        let val: string = item[1] as string;
+        idC.push(item[1] as string);
+        //console.log(val);
+        // console.log(item[1]);
         let str: string = val.toString();
         //console.log(val.toUpperCase().toString());
         //console.log(ids);
         const index = ids.findIndex((item) => item === str);
         //console.log(index);
         students.push(names[index]);
-      }
+      });
+      //data.map((item) => console.log(item));
+      // for (var i = 0; i < data.length; i++) {
+
+      //   //console.log(val.toUpperCase().toString());
+      //   //console.log(ids);
+      //   //const index = ids.findIndex((item) => item === str);
+      //   //console.log(index);
+      //   //students.push(names[index]);
+      // }
     });
 
     setTimeout(() => {
       setLoading(false);
+      setIDS([...idC]);
       setStud([...students]);
     }, 4000);
   }, []);
