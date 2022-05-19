@@ -121,37 +121,46 @@ export const Attendance: React.FC<AttendanceProps> = ({ names, ids }) => {
       }}
     >
       {loading ? (
-        <CircularProgress />
+        <div
+          style={{
+            height: "100vh",
+            width: "100vh",
+            position: "fixed",
+            left: "50%",
+            top: "90%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <CircularProgress />
+        </div>
       ) : (
         <Grid
           container
-          rowSpacing={3}
-          margin={3}
+          rowSpacing={2}
+          margin={2}
           display="flex"
           justifyContent="space-evenly"
           flexDirection="row"
         >
           {stud.map((item, idx) => (
-            <Grid item xs={3} key={idx}>
+            <Grid item xs={4} key={idx}>
               <Box
                 height="100%"
                 display="flex"
                 justifyContent="center"
                 flexDirection="column"
               >
-                <Card sx={{ maxWidth: 200, height: 100 }} variant="outlined">
+                <Card sx={{ maxWidth: 300, height: 100 }} variant="outlined">
                   <React.Fragment>
                     <CardContent>
                       <Typography
-                        sx={{ fontSize: 10 }}
+                        sx={{ fontSize: 15 }}
                         color="text.secondary"
                         gutterBottom
                       >
                         {item}
                       </Typography>
-                      <Typography variant="h5" component="div">
-                        {id[idx]}
-                      </Typography>
+                      <Typography sx={{ fontSize: 20 }}>{id[idx]}</Typography>
                     </CardContent>
                   </React.Fragment>
                 </Card>

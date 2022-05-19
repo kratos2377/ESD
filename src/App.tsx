@@ -1,4 +1,10 @@
-import { Button, CircularProgress } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  CssBaseline,
+  GlobalStyles,
+} from "@mui/material";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import { getDatabase, ref, onValue, set } from "firebase/database";
@@ -37,37 +43,74 @@ function App() {
       setids([...ids]);
       setNames([...name]);
       setLoading(false);
-    }, 2000);
+    }, 3000);
   }, []);
+
+  const theme = createTheme({
+    palette: {
+      mode: "dark",
+      primary: {
+        main: "#00ff110",
+        contrastText: "#ff",
+      },
+      secondary: {
+        main: "#fff00",
+      },
+    },
+  });
   return (
-    <div className="App">
-      {loading ? (
-        <CircularProgress />
-      ) : !checkAttendance ? (
-        <div
-          style={{
-            height: "100vh",
-            width: "100vh",
-            position: "fixed",
-            left: "50%",
-            top: "90%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          {" "}
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setCheckAttendance(true);
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <GlobalStyles
+        styles={{
+          body: {
+            background: "#251D3A",
+            //background: 'linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%)',
+            //background:
+            //"linear-gradient(348deg, rgba(2,0,36,1) 0%, rgba(177,29,29,0.9588877787443102) 37%, rgba(145,40,182,1) 44%, rgba(0,212,255,1) 93%)",
+          },
+        }}
+      />
+      <div className="App">
+        {loading ? (
+          <div
+            style={{
+              height: "100vh",
+              width: "100vh",
+              position: "fixed",
+              left: "50%",
+              top: "90%",
+              transform: "translate(-50%, -50%)",
             }}
           >
-            Check Attendance
-          </Button>{" "}
-        </div>
-      ) : (
-        <Attendance names={names} ids={IDs} />
-      )}
-    </div>
+            <CircularProgress />
+          </div>
+        ) : !checkAttendance ? (
+          <div
+            style={{
+              height: "100vh",
+              width: "100vh",
+              position: "fixed",
+              left: "50%",
+              top: "90%",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            {" "}
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setCheckAttendance(true);
+              }}
+            >
+              Check Attendance
+            </Button>{" "}
+          </div>
+        ) : (
+          <Attendance names={names} ids={IDs} />
+        )}
+      </div>
+    </ThemeProvider>
   );
 }
 
